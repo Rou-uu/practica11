@@ -507,7 +507,26 @@ public class Grafica<T> implements Coleccion<T> {
      */
     @Override public String toString() {
         // Aquí va su código.
-        return "";
+        String res = "{";
+
+        for (Vertice v : vertices)
+            res += v.elemento + ", ";
+
+        res += "}, {";
+
+        Conjunto<T> anteriores = new Conjunto<T>();
+        for (Vertice v : vertices) {
+            for (Vecino x : v.vecinos) {
+                if (!anteriores.contiene(x.vecino.elemento))
+                    res += String.format("(%s, %s), ", v.elemento.toString(), x.vecino.elemento.toString());
+            }
+
+            anteriores.agrega(v.elemento);
+        }
+
+        res += "}";
+
+        return res;
     }
 
     /**
@@ -521,7 +540,24 @@ public class Grafica<T> implements Coleccion<T> {
             return false;
         @SuppressWarnings("unchecked") Grafica<T> grafica = (Grafica<T>)objeto;
         // Aquí va su código.
-        return false;
+        if (aristas != grafica.aristas || vertices.getElementos() != grafica.vertices.getElementos())
+            return false;
+
+        for (Vertice v : vertices) {
+            if (!grafica.vertices.contiene(v.elemento))
+                return false;
+
+            Vertice v2 = (Vertice) grafica.vertice(v.elemento);
+
+            if (v.vecinos.getElementos() != v2.vecinos.getElementos())
+                return false;
+
+            for (Vecino x : v.vecinos)
+                if (!v2.vecinos.contiene(x.vecino.elemento))
+                    return false;
+        }
+
+        return true;
     }
 
     /**
